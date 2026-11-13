@@ -8,25 +8,31 @@ public class PlaylistComparison {
 
     static ArrayList<String> createArrayList(int size) {
         ArrayList<String> list = new ArrayList<>();
+
         for (int i = 0; i < size; i++) {
             list.add("Song" + i);
         }
+
         return list;
     }
 
     static LinkedList<String> createLinkedList(int size) {
         LinkedList<String> list = new LinkedList<>();
+
         for (int i = 0; i < size; i++) {
             list.add("Song" + i);
         }
+
         return list;
     }
 
     static ArrayDeque<String> createArrayDeque(int size) {
         ArrayDeque<String> deque = new ArrayDeque<>();
+
         for (int i = 0; i < size; i++) {
             deque.addLast("Song" + i);
         }
+
         return deque;
     }
 
@@ -69,6 +75,7 @@ public class PlaylistComparison {
             if (count == index) {
                 return song;
             }
+
             count++;
         }
 
@@ -89,17 +96,21 @@ public class PlaylistComparison {
 
     static String iterateList(List<String> list) {
         String last = "";
+
         for (String song : list) {
             last = song;
         }
+
         return last;
     }
 
     static String iterateDeque(ArrayDeque<String> deque) {
         String last = "";
+
         for (String song : deque) {
             last = song;
         }
+
         return last;
     }
 
@@ -123,6 +134,9 @@ public class PlaylistComparison {
         long arrayAccess = 0, linkedAccess = 0, dequeAccess = 0;
         long arrayIteration = 0, linkedIteration = 0, dequeIteration = 0;
 
+        long arrayRemoveFront = 0, linkedRemoveFront = 0, dequeRemoveFront = 0;
+        long arrayRemoveMiddle = 0, linkedRemoveMiddle = 0, dequeRemoveMiddle = 0;
+
         int middle = size / 2;
 
         for (int r = 0; r < REPEATS; r++) {
@@ -145,7 +159,7 @@ public class PlaylistComparison {
             linkedFront += measure(() -> l1.addFirst("NewSong"));
             dequeFront += measure(() -> d1.addFirst("NewSong"));
 
-            // Add at middle
+            // Add in middle
             final ArrayList<String> a2 = createArrayList(size);
             final LinkedList<String> l2 = createLinkedList(size);
             final ArrayDeque<String> d2 = createArrayDeque(size);
@@ -154,7 +168,7 @@ public class PlaylistComparison {
             linkedMiddle += measure(() -> l2.add(middle, "NewSong"));
             dequeMiddle += measure(() -> insertMiddle(d2, "NewSong"));
 
-            // Access kth element
+            // Access kth song
             final ArrayList<String> a3 = createArrayList(size);
             final LinkedList<String> l3 = createLinkedList(size);
             final ArrayDeque<String> d3 = createArrayDeque(size);
@@ -177,18 +191,18 @@ public class PlaylistComparison {
             final LinkedList<String> l5 = createLinkedList(size);
             final ArrayDeque<String> d5 = createArrayDeque(size);
 
-            measure(() -> a5.remove(0));
-            measure(() -> l5.removeFirst());
-            measure(() -> d5.removeFirst());
+            arrayRemoveFront += measure(() -> a5.remove(0));
+            linkedRemoveFront += measure(() -> l5.removeFirst());
+            dequeRemoveFront += measure(() -> d5.removeFirst());
 
             // Remove middle song
             final ArrayList<String> a6 = createArrayList(size);
             final LinkedList<String> l6 = createLinkedList(size);
             final ArrayDeque<String> d6 = createArrayDeque(size);
 
-            measure(() -> a6.remove(middle));
-            measure(() -> l6.remove(middle));
-            measure(() -> removeMiddle(d6));
+            arrayRemoveMiddle += measure(() -> a6.remove(middle));
+            linkedRemoveMiddle += measure(() -> l6.remove(middle));
+            dequeRemoveMiddle += measure(() -> removeMiddle(d6));
         }
 
         System.out.println("\nAVERAGE TIME IN MILLISECONDS");
@@ -199,9 +213,10 @@ public class PlaylistComparison {
         printRow("Add middle", arrayMiddle, linkedMiddle, dequeMiddle);
         printRow("Access kth", arrayAccess, linkedAccess, dequeAccess);
         printRow("Iteration", arrayIteration, linkedIteration, dequeIteration);
+        printRow("Remove front", arrayRemoveFront, linkedRemoveFront, dequeRemoveFront);
+        printRow("Remove middle", arrayRemoveMiddle, linkedRemoveMiddle, dequeRemoveMiddle);
 
-        System.out.println("\nRemoval operations were also tested.");
-        System.out.println("Checksum: " + checksum);
+        System.out.println("\nChecksum: " + checksum);
     }
 
     public static void main(String[] args) {
