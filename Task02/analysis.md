@@ -37,5 +37,32 @@ Three collection sizes will be tested:
 ArrayDeque is considered for the Up Next queue because it supports adding and removing songs efficiently at both ends.
 
 ## 7. Results and Conclusion
+### 7.1 Experimental Results
 
-To be completed after executing the Java program and recording the experimental results.
+The Java program was executed successfully using three different playlist sizes: 1,000, 10,000 and 100,000 songs.
+
+The following observations were recorded:
+
+| Operation | Best Performing Collection (Observed) |
+|---|---|
+| Add at end | LinkedList / ArrayDeque |
+| Add at front | ArrayDeque |
+| Add in middle | ArrayList |
+| Access kth song | ArrayList |
+| Iteration | ArrayDeque for 1,000 and 10,000; LinkedList for 100,000 |
+
+### 7.2 Analysis
+
+- ArrayList performed well in accessing songs by index.
+- LinkedList provided efficient insertion at the beginning.
+- ArrayDeque performed well when adding songs at the front and end.
+- ArrayDeque was slower for middle insertion and indexed access because traversal was required.
+- Performance varied with playlist size and execution conditions.
+
+### 7.3 Conclusion
+
+The experiment demonstrates that no single collection is best for every playlist operation.
+
+ArrayList is suitable for fast random access, LinkedList is useful for insertion and removal at the ends, and ArrayDeque is suitable for managing an Up Next queue.
+
+Therefore, the choice of collection depends on the application's requirements and the operations performed frequently.
