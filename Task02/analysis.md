@@ -82,10 +82,70 @@ The program was executed using three playlist sizes: 1,000, 10,000 and 100,000 s
 2. **Add at front:** ArrayDeque performed best for larger playlists because it supports efficient insertion at the front.
 3. **Add middle:** ArrayList performed better in these measurements. ArrayDeque was slower because reaching the middle requires traversal.
 4. **Access kth song:** ArrayList was the fastest because it supports direct index-based access.
-5. **Iteration:** The results varied with playlist size. All three collections can iterate through their elements in linear time.
+5. **Iteration:** The results varied with playlist size. All three collections support iteration in O(n) time.
 6. **Remove front:** LinkedList and ArrayDeque performed efficiently for larger playlists, while ArrayList required shifting elements.
 7. **Remove middle:** ArrayList performed best in these measurements. LinkedList and ArrayDeque required traversal to reach the middle position.
 
 ### 7.5 Overall Observation
 
-The experiment shows that no single collection is the best choice for every playlist operation. ArrayList is suitable for frequent random access, LinkedList is useful for frequent end operations when using its list operations, and ArrayDeque is suitable for an Up Next queue that mainly adds and removes songs at both ends.
+No single collection is the best choice for every playlist operation. ArrayList is suitable for frequent random access, LinkedList supports efficient operations at both ends, and ArrayDeque is suitable for an Up Next queue.
+
+## 8. Time Complexity Comparison
+
+| Operation | ArrayList | LinkedList | ArrayDeque |
+|---|---|---|---|
+| Add at end | O(1) amortized | O(1) | O(1) amortized |
+| Add at front | O(n) | O(1) | O(1) amortized |
+| Add middle | O(n) | O(n) | O(n) |
+| Access kth | O(1) | O(n) | O(n) |
+| Iteration | O(n) | O(n) | O(n) |
+| Remove front | O(n) | O(1) | O(1) amortized |
+| Remove middle | O(n) | O(n) | O(n) |
+
+### 8.1 Space Complexity
+
+All three collections require O(n) space to store n songs.
+
+- **ArrayList:** Uses a resizable array.
+- **LinkedList:** Uses nodes that store song data and links to other nodes.
+- **ArrayDeque:** Uses a resizable circular array.
+
+### 8.2 Plain Array Alternative
+
+A plain array can also store playlist songs, but its size is fixed after creation.
+
+- Accessing the kth song takes O(1) time.
+- Inserting or removing a song in the middle takes O(n) time because elements must be shifted.
+- Iterating through all songs takes O(n) time.
+
+Therefore, a plain array is less flexible when the playlist size changes frequently.
+
+## 9. Up Next Queue Design Using ArrayDeque
+
+ArrayDeque is suitable for implementing the Up Next queue because it supports efficient insertion and removal at both ends.
+
+The following operations can be used:
+
+- `addFirst(song)` – Adds a song at the front.
+- `addLast(song)` – Adds a song at the end.
+- `removeFirst()` – Removes the next song from the front.
+- `removeLast()` – Removes a song from the end.
+
+For example:
+
+1. Add a priority song at the front using `addFirst()`.
+2. Add upcoming songs at the end using `addLast()`.
+
+This makes ArrayDeque a suitable choice for managing the Up Next queue.
+
+## 10. Final Conclusion
+
+The experiment compared ArrayList, LinkedList and ArrayDeque for different playlist operations using three collection sizes.
+
+- ArrayList is suitable when frequent random access and middle operations are required.
+- LinkedList is suitable when frequent insertion and removal at the beginning or end are required.
+- ArrayDeque is suitable for an Up Next queue where songs are mainly added and removed from both ends.
+
+Based on the experiment, ArrayList is a good choice for general playlist storage, while ArrayDeque is a better choice for the Up Next queue.
+
+The final collection should be selected based on the operations performed most frequently in the application.
