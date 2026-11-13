@@ -78,3 +78,100 @@ The actual results will be compared with these predictions after execution.
 
 The final conclusion will be written after collecting and analysing the experimental results.
 
+
+## 8. Design Decision for a Multithreaded Booking Server
+
+The railway booking server may handle multiple booking requests at the same time.
+
+### 8.1 Per-Ticket Text
+
+StringBuilder is recommended for creating individual ticket text.
+
+Reason:
+- It supports efficient repeated append operations.
+- It avoids creating a new String for every concatenation.
+- Each booking thread can use its own StringBuilder object.
+
+After the ticket is generated, toString() can convert it into an immutable String.
+
+### 8.2 Shared Booking Log
+
+StringBuffer can be used when multiple threads append to the same shared log because its append methods are synchronized.
+
+However, synchronization may reduce performance when many threads access the same log.
+
+An alternative is to use a dedicated logging mechanism or synchronize access to a shared StringBuilder.
+
+### 8.3 Final Recommendation
+
+Use StringBuilder for individual ticket generation and a thread-safe logging approach for the shared booking log.
+
+## 9. Alternative Concept and Complexity Analysis
+
+### 9.1 Using String.join()
+
+String.join() combines multiple strings using a specified delimiter.
+
+Example:
+
+String ticket = String.join(" | ", fields);
+
+It is useful when all fields are already available as strings.
+
+### 9.2 Using StringJoiner
+
+StringJoiner can combine multiple strings with a delimiter, prefix and suffix.
+
+Example:
+
+StringJoiner ticket = new StringJoiner(" | ", "[", "]");
+for (String field : fields) {
+    ticket.add(field);
+}
+String result = ticket.toString();
+
+It is useful when a ticket needs a consistent format.
+
+### 9.3 Using String.format()
+
+String.format() creates formatted text using placeholders.
+
+Example:
+
+String ticket = String.format("PNR: %s | Name: %s",
+                              "123456", "Arun");
+
+It is useful for formatted output, but repeated formatting can involve additional processing.
+
+### 9.4 Time Complexity Comparison
+
+Let n represent the number of fields and L represent the average length of each field.
+
+| Approach | Time Complexity |
+|---|---|
+| Repeated String concatenation | O(n² × L) |
+| StringBuilder | O(n × L) amortized |
+| StringBuffer | O(n × L) amortized |
+| String.join() | O(n × L) |
+| StringJoiner | O(n × L) |
+| String.format() | Depends on formatting and input size; generally has extra formatting overhead |
+
+The assignment describes repeated String concatenation as O(n²) character copying and StringBuilder as O(n).
+
+### 9.5 Space Complexity
+
+- String concatenation can create multiple intermediate String objects, increasing temporary memory usage.
+- StringBuilder uses a mutable character buffer and creates a final String when toString() is called.
+- StringBuffer also uses a mutable character buffer and creates a final String when toString() is called.
+- String.join() and StringJoiner create the resulting combined text, with temporary processing and result storage.
+- String.format() creates a formatted result String and may use additional formatting resources.
+
+### 9.6 Final Conclusion
+
+StringBuilder is suitable for building individual railway tickets because it reduces repeated intermediate String creation.
+
+StringBuffer is an option for shared text modification when synchronized append operations are required.
+
+The final performance decision will be based on the actual execution-time and memory measurements collected from the experiments.
+
+
