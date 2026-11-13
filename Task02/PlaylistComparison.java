@@ -1,8 +1,10 @@
+
 import java.util.*;
 
 public class PlaylistComparison {
 
     static final int REPEATS = 3;
+    static long checksum = 0;
 
     static ArrayList<String> createArrayList(int size) {
         ArrayList<String> list = new ArrayList<>();
@@ -79,121 +81,6 @@ public class PlaylistComparison {
         return System.nanoTime() - start;
     }
 
-    static void testCollections(int size) {
-
-        System.out.println("\n==================================");
-        System.out.println("PLAYLIST SIZE: " + size);
-        System.out.println("==================================");
-
-        long arrayEnd = 0, linkedEnd = 0, dequeEnd = 0;
-        long arrayFront = 0, linkedFront = 0, dequeFront = 0;
-        long arrayMiddle = 0, linkedMiddle = 0, dequeMiddle = 0;
-        long arrayAccess = 0, linkedAccess = 0, dequeAccess = 0;
-        long arrayIteration = 0, linkedIteration = 0, dequeIteration = 0;
-
-        long checksum = 0;
-        int middle = size / 2;
-
-        for (int r = 0; r < REPEATS; r++) {
-
-            ArrayList<String> a = createArrayList(size);
-            LinkedList<String> l = createLinkedList(size);
-            ArrayDeque<String> d = createArrayDeque(size);
-
-            arrayEnd += measure(() -> a.add("NewSong"));
-            linkedEnd += measure(() -> l.add("NewSong"));
-            dequeEnd += measure(() -> d.addLast("NewSong"));
-
-            a = createArrayList(size);
-            l = createLinkedList(size);
-            d = createArrayDeque(size);
-
-            ArrayList<String> a1 = a;
-            LinkedList<String> l1 = l;
-            ArrayDeque<String> d1 = d;
-
-            arrayFront += measure(() -> a1.add(0, "NewSong"));
-            linkedFront += measure(() -> l1.addFirst("NewSong"));
-            dequeFront += measure(() -> d1.addFirst("NewSong"));
-
-            a = createArrayList(size);
-            l = createLinkedList(size);
-            d = createArrayDeque(size);
-
-            ArrayList<String> a2 = a;
-            LinkedList<String> l2 = l;
-            ArrayDeque<String> d2 = d;
-
-            arrayMiddle += measure(() -> a2.add(middle, "NewSong"));
-            linkedMiddle += measure(() -> l2.add(middle, "NewSong"));
-            dequeMiddle += measure(() -> insertMiddle(d2, "NewSong"));
-
-            a = createArrayList(size);
-            l = createLinkedList(size);
-            d = createArrayDeque(size);
-
-            ArrayList<String> a3 = a;
-            LinkedList<String> l3 = l;
-            ArrayDeque<String> d3 = d;
-
-            arrayAccess += measure(() -> checksumHolder(a3.get(middle)));
-            linkedAccess += measure(() -> checksumHolder(l3.get(middle)));
-            dequeAccess += measure(() -> checksumHolder(getDequeSong(d3, middle)));
-
-            a = createArrayList(size);
-            l = createLinkedList(size);
-            d = createArrayDeque(size);
-
-            ArrayList<String> a4 = a;
-            LinkedList<String> l4 = l;
-            ArrayDeque<String> d4 = d;
-
-            arrayIteration += measure(() -> checksumHolder(iterateList(a4)));
-            linkedIteration += measure(() -> checksumHolder(iterateList(l4)));
-            dequeIteration += measure(() -> checksumHolder(iterateDeque(d4)));
-
-            // Remove the first song
-            a = createArrayList(size);
-            l = createLinkedList(size);
-            d = createArrayDeque(size);
-
-            ArrayList<String> a5 = a;
-            LinkedList<String> l5 = l;
-            ArrayDeque<String> d5 = d;
-
-            measure(() -> a5.remove(0));
-            measure(() -> l5.removeFirst());
-            measure(() -> d5.removeFirst());
-
-            // Remove the middle song
-            a = createArrayList(size);
-            l = createLinkedList(size);
-            d = createArrayDeque(size);
-
-            ArrayList<String> a6 = a;
-            LinkedList<String> l6 = l;
-            ArrayDeque<String> d6 = d;
-
-            measure(() -> a6.remove(middle));
-            measure(() -> l6.remove(middle));
-            measure(() -> removeMiddle(d6));
-        }
-
-        System.out.println("\nAVERAGE TIME IN MILLISECONDS");
-        System.out.println("Operation       ArrayList    LinkedList    ArrayDeque");
-
-        printRow("Add at end", arrayEnd, linkedEnd, dequeEnd);
-        printRow("Add at front", arrayFront, linkedFront, dequeFront);
-        printRow("Add middle", arrayMiddle, linkedMiddle, dequeMiddle);
-        printRow("Access kth", arrayAccess, linkedAccess, dequeAccess);
-        printRow("Iteration", arrayIteration, linkedIteration, dequeIteration);
-
-        System.out.println("\nRemoval operations were also tested.");
-        System.out.println("Checksum: " + checksum);
-    }
-
-    static long checksum = 0;
-
     static void checksumHolder(String value) {
         if (value != null) {
             checksum += value.length();
@@ -222,6 +109,99 @@ public class PlaylistComparison {
                 a / (double) REPEATS / 1_000_000.0,
                 l / (double) REPEATS / 1_000_000.0,
                 d / (double) REPEATS / 1_000_000.0);
+    }
+
+    static void testCollections(int size) {
+
+        System.out.println("\n==================================");
+        System.out.println("PLAYLIST SIZE: " + size);
+        System.out.println("==================================");
+
+        long arrayEnd = 0, linkedEnd = 0, dequeEnd = 0;
+        long arrayFront = 0, linkedFront = 0, dequeFront = 0;
+        long arrayMiddle = 0, linkedMiddle = 0, dequeMiddle = 0;
+        long arrayAccess = 0, linkedAccess = 0, dequeAccess = 0;
+        long arrayIteration = 0, linkedIteration = 0, dequeIteration = 0;
+
+        int middle = size / 2;
+
+        for (int r = 0; r < REPEATS; r++) {
+
+            // Add at end
+            final ArrayList<String> a = createArrayList(size);
+            final LinkedList<String> l = createLinkedList(size);
+            final ArrayDeque<String> d = createArrayDeque(size);
+
+            arrayEnd += measure(() -> a.add("NewSong"));
+            linkedEnd += measure(() -> l.add("NewSong"));
+            dequeEnd += measure(() -> d.addLast("NewSong"));
+
+            // Add at front
+            final ArrayList<String> a1 = createArrayList(size);
+            final LinkedList<String> l1 = createLinkedList(size);
+            final ArrayDeque<String> d1 = createArrayDeque(size);
+
+            arrayFront += measure(() -> a1.add(0, "NewSong"));
+            linkedFront += measure(() -> l1.addFirst("NewSong"));
+            dequeFront += measure(() -> d1.addFirst("NewSong"));
+
+            // Add at middle
+            final ArrayList<String> a2 = createArrayList(size);
+            final LinkedList<String> l2 = createLinkedList(size);
+            final ArrayDeque<String> d2 = createArrayDeque(size);
+
+            arrayMiddle += measure(() -> a2.add(middle, "NewSong"));
+            linkedMiddle += measure(() -> l2.add(middle, "NewSong"));
+            dequeMiddle += measure(() -> insertMiddle(d2, "NewSong"));
+
+            // Access kth element
+            final ArrayList<String> a3 = createArrayList(size);
+            final LinkedList<String> l3 = createLinkedList(size);
+            final ArrayDeque<String> d3 = createArrayDeque(size);
+
+            arrayAccess += measure(() -> checksumHolder(a3.get(middle)));
+            linkedAccess += measure(() -> checksumHolder(l3.get(middle)));
+            dequeAccess += measure(() -> checksumHolder(getDequeSong(d3, middle)));
+
+            // Iteration
+            final ArrayList<String> a4 = createArrayList(size);
+            final LinkedList<String> l4 = createLinkedList(size);
+            final ArrayDeque<String> d4 = createArrayDeque(size);
+
+            arrayIteration += measure(() -> checksumHolder(iterateList(a4)));
+            linkedIteration += measure(() -> checksumHolder(iterateList(l4)));
+            dequeIteration += measure(() -> checksumHolder(iterateDeque(d4)));
+
+            // Remove first song
+            final ArrayList<String> a5 = createArrayList(size);
+            final LinkedList<String> l5 = createLinkedList(size);
+            final ArrayDeque<String> d5 = createArrayDeque(size);
+
+            measure(() -> a5.remove(0));
+            measure(() -> l5.removeFirst());
+            measure(() -> d5.removeFirst());
+
+            // Remove middle song
+            final ArrayList<String> a6 = createArrayList(size);
+            final LinkedList<String> l6 = createLinkedList(size);
+            final ArrayDeque<String> d6 = createArrayDeque(size);
+
+            measure(() -> a6.remove(middle));
+            measure(() -> l6.remove(middle));
+            measure(() -> removeMiddle(d6));
+        }
+
+        System.out.println("\nAVERAGE TIME IN MILLISECONDS");
+        System.out.println("Operation       ArrayList    LinkedList    ArrayDeque");
+
+        printRow("Add at end", arrayEnd, linkedEnd, dequeEnd);
+        printRow("Add at front", arrayFront, linkedFront, dequeFront);
+        printRow("Add middle", arrayMiddle, linkedMiddle, dequeMiddle);
+        printRow("Access kth", arrayAccess, linkedAccess, dequeAccess);
+        printRow("Iteration", arrayIteration, linkedIteration, dequeIteration);
+
+        System.out.println("\nRemoval operations were also tested.");
+        System.out.println("Checksum: " + checksum);
     }
 
     public static void main(String[] args) {
