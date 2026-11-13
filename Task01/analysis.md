@@ -170,6 +170,44 @@ The assignment describes repeated String concatenation as O(n²) character copyi
 
 StringBuilder is suitable for building individual railway tickets because it reduces repeated intermediate String creation.
 
+
+## 10. Experimental Results
+
+### 10.1 Execution Time Comparison
+
+The following results were obtained by executing the Java program.
+
+| Workload | String (ms) | StringBuilder (ms) | StringBuffer (ms) |
+|---|---:|---:|---:|
+| Workload 1 | 0.0010 | 0.0006 | 0.0008 |
+| Workload 2 | 29.7056 | 8.2927 | 5.1517 |
+| Workload 3 | 7.1609 | 1.0456 | 1.6478 |
+
+### 10.2 Observations
+
+1. In Workload 1, all three approaches showed very small execution times.
+2. In Workload 2, StringBuffer recorded the lowest execution time of 5.1517 ms.
+3. In Workload 3, StringBuilder recorded the lowest execution time of 1.0456 ms.
+4. Repeated String concatenation took more time in the larger workloads.
+5. StringBuilder and StringBuffer created approximately one final String per ticket, while repeated String concatenation created additional intermediate String objects.
+
+### 10.3 Memory Measurement
+
+| Measurement | Result |
+|---|---:|
+| Memory before | 2606 KB |
+| Memory after | 2606 KB |
+| Memory change | 0 KB |
+
+The measured memory change was 0 KB at the displayed precision. This is an approximate measurement and does not prove that no additional memory was allocated.
+
+### 10.4 Limitations
+
+The execution times may vary depending on JVM warm-up, garbage collection, system load and measurement conditions. Only five measurement repetitions were used for Workloads 2 and 3. Therefore, the results should be treated as observations from this execution rather than universal performance guarantees.
+
+### 10.5 Final Conclusion
+
+Repeated String concatenation showed higher execution time in the larger workloads. StringBuilder performed best in Workload 3, while StringBuffer performed best in Workload 2. StringBuilder is a suitable default choice for constructing individual e-tickets because it supports mutable text construction without synchronization overhead. The final choice should consider the application's threading requirements.
 StringBuffer is an option for shared text modification when synchronized append operations are required.
 
 The final performance decision will be based on the actual execution-time and memory measurements collected from the experiments.
