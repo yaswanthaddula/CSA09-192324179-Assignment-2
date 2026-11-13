@@ -185,4 +185,83 @@ The insertion time increased as the number of patients increased.
 
 This shows that adding more patients requires more processing.
 
+### 6.2 Removal Analysis
 
+The removal time also increased with queue size.
+
+- 1,000 patients: 1.8816 ms
+- 10,000 patients: 2.6642 ms
+- 100,000 patients: 28.4623 ms
+
+Removing patients from a PriorityQueue requires maintaining its heap structure after each removal.
+
+Therefore, removal generally takes O(log n) time per patient.
+
+## 7. Fairness and Starvation
+
+### 7.1 Fairness
+
+Fairness means patients with equal severity should be treated in the order in which they arrived.
+
+The experiment used arrival order as the second sorting condition.
+
+For example, Meena was served before Kumar because both had severity 1 and Meena arrived first.
+
+### 7.2 Starvation
+
+Starvation occurs when low-priority patients wait for a very long time because higher-priority patients continue to arrive.
+
+For example:
+
+- A severity 5 patient may wait while many severity 1 patients arrive.
+- A severity 4 patient may repeatedly be delayed by newly arriving severity 2 patients.
+
+### 7.3 Starvation Prevention
+
+A technique called priority aging can help reduce starvation.
+
+Priority aging gradually increases the priority of patients who have waited for a long time.
+
+This allows waiting patients to eventually receive treatment instead of being delayed indefinitely.
+
+## 8. Time Complexity Comparison
+
+| Operation | Normal FIFO Queue | PriorityQueue |
+|---|---|---|
+| Insertion | O(1) | O(log n) |
+| Removal | O(1) | O(log n) |
+| View next element | O(1) | O(1) |
+| Search arbitrary element | O(n) | O(n) |
+
+The PriorityQueue requires additional work to maintain priority ordering, while a normal FIFO queue simply follows arrival order.
+
+## 9. Important Observations
+
+1. A normal FIFO queue serves elements in arrival order.
+2. PriorityQueue serves elements according to priority.
+3. A comparator can define multiple sorting conditions.
+4. Equal-severity patients can be served in FIFO order by using arrival sequence as a secondary comparison.
+5. Printing a PriorityQueue directly does not display a guaranteed sorted sequence.
+6. Repeated `poll()` operations provide the actual priority-based removal order.
+7. Priority aging can help reduce starvation.
+
+## 10. Limitations
+
+1. Only eight sample patients were used for the service-order demonstration.
+2. The performance experiment used generated patient records.
+3. Execution times may vary because of JVM warm-up, garbage collection, and background system activity.
+4. The experiment used five repetitions.
+5. Priority aging was discussed but not implemented in the program.
+6. The comparator uses fixed severity values and does not account for changing medical conditions.
+
+## 11. Conclusion
+
+The experiment successfully demonstrated normal FIFO queues and priority-based queues using Java.
+
+The normal queue served patients according to arrival order, while the PriorityQueue served patients according to severity.
+
+The comparator ensured that patients with equal severity were served in FIFO order.
+
+The performance measurements showed that insertion and removal times increased with queue size. The experiment also explained fairness and starvation and discussed priority aging as a possible solution.
+
+Therefore, PriorityQueue is useful in hospital triage systems where patients must be treated according to urgency rather than arrival order.
